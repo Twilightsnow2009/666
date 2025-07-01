@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>链接追踪参数清理工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #result {
+            display: none;
+            margin-top: 20px;
+        }
+        .security-warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>链接追踪参数清理工具</h1>
+        <textarea id="urlInput" placeholder="在这里粘贴要清理的链接..."></textarea>
+        <button onclick="cleanAndShow()">清理链接</button>
+        <div id="result">
+            <h3>清理后的链接：</h3>
+            <textarea id="cleanedURL" readonly></textarea>
+            <button onclick="copyToClipboard()">复制到剪贴板</button>
+            <div class="security-warning">
+                <p>安全提示：已去除追踪参数。请勿随意分享个人敏感信息，注意隐私保护。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载平台规则文件 -->
+    <script src="platformRules.js"></script>
+    
+    <script>
+        // 加载平台规则
+        function loadPlatformRules() {
+            if (typeof platformRules === 'undefined') {
+                alert('无法加载平台规则文件，请检查 platformRules.js 是否存在');
+                return [];
+            }
+            return platformRules;
+        }
+
+        // 清理函数
+        function cleanAndShow() {
+            const input = document.getElementById('urlInput').value.trim();
+            if (!input) return alert("请输入链接");
+
+            try {
+                const url = new URL(input);
+                const search = new URLSearchParams(url.search);
+
+                const rules = loadPlatformRules();
+                let matchedRule = null;
+
+                // 查找匹配的规则
+                for (const rule of rules) {
+                    if (rule.domains.some(domain => url.hostname.includes(domain))) {
+                        matchedRule = rule;
+                        break;
+                    }
+                }
+
+                // 删除追踪参数
+                if (matchedRule) {
+                    matchedRule.params.forEach(param => {
+                        search.delete(param);
+                    });
+                    url.search = search.toString();
+                }
+
+                // 显示结果
+                document.getElementById('cleanedURL').value = url.href;
+                document.getElementById('result').style.display = 'block';
+
+                // 提取用户ID
+                let userId = '无法识别';
+                if (matchedRule && matchedRule.userPattern) {
+                    const match = input.match(matchedRule.userPattern);
+                    if (match && match[1]) {
+                        userId = match[1];
+                    }
+                }
+
+                alert(`平台：${matchedRule ? matchedRule.name : '未知'}\n用户ID：${userId}\n\n已去除追踪参数，请注意信息安全！`);
+
+            } catch (e) {
+                alert('无效的URL格式，请检查链接是否正确');
+            }
+        }
+
+        // 复制函数
+        function copyToClipboard() {
+            const el = document.getElementById('cleanedURL');
+            el.select();
+            document.execCommand('copy');
+            alert('链接已复制到剪贴板');
+        }
+    </script>
+</body>
+</html>
