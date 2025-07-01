@@ -1,4 +1,3 @@
-// platformRules.js
 const platformRules = [
       // 社交平台
       { name: "微信公众号", domains: ["mp.weixin.qq.com"], params: ["__biz","mid","idx","sn","scene","subscene"], userPattern: /__biz=(\w+)/ },
