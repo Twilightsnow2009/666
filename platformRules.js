@@ -1,6 +1,6 @@
 // platformRules.js
 const platformRules = [
-// 社交平台
+      // 社交平台
       { name: "微信公众号", domains: ["mp.weixin.qq.com"], params: ["__biz","mid","idx","sn","scene","subscene"], userPattern: /__biz=(\w+)/ },
       { name: "微博",          domains: ["weibo.com","weibo.cn"], params: ["from","is_hot","sudaref","retcode","type"], userPattern: /u\/(\d+)/ },
       { name: "抖音",          domains: ["douyin.com","iesdouyin.com"], params: ["utm_source","utm_campaign","share_token","udid","recommend_rank"], userPattern: /user\/(\w+)/ },
@@ -126,5 +126,6 @@ const platformRules = [
     { name: "惠农网", domains: ["cnhnb.com"], params: ["productId","supplierId","from=search"], userPattern: /product\/(\d+)/ },
     { name: "一亩田", domains: ["yimutian.com"], params: ["productId","sellerId","from=app"], userPattern: /product\/(\d+)/ },
     { name: "淘宝农村淘宝", domains: ["nongcun.taobao.com"], params: ["itemId","villageId","from=share"], userPattern: /item\/(\d+)/ },
-    { name: "京东农场", domains: ["nongchang.jd.com"], params: ["productId","farmId","from=web"], userPattern: /product\/(\d+)/ }];
+    { name: "京东农场", domains: ["nongchang.jd.com"], params: ["productId","farmId","from=web"], userPattern: /product\/(\d+)/ }
+];
     
